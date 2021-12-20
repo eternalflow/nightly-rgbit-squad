@@ -36,14 +36,26 @@ abstract contract Generative {
 }
 contract NftRoot is DataResolver, IndexResolver, INftRoot, Generative {
 
+    struct Share {
+        address beneficiary;
+        uint8 share; 
+    }
     address static _addrOwner;
     uint256 _totalMinted;
     address public _addrBasis;
+    Share[] _shares;
 
-    constructor(TvmCell codeIndex, TvmCell codeData) public {
+    constructor(TvmCell codeIndex, TvmCell codeData, Share[] shares) public {
         tvm.accept();
         _codeIndex = codeIndex;
         _codeData = codeData;
+        
+        uint8 sum = 0;
+        for (Share s: shares) {
+            sum = sum + s.share;
+        }
+        require(sum == 100, 200);
+        _shares = shares;
     }
 
     function _mint() internal {
@@ -58,8 +70,15 @@ contract NftRoot is DataResolver, IndexResolver, INftRoot, Generative {
         _totalMinted++;
     }
 
+    function _share() private view {
+        for (Share s: _shares) {
+            s.beneficiary.transfer((msg.value * s.share / 100), false, 0);
+        }
+    }
+
     function buy() public override useRNG {
         require(msg.value >= 5 ton, 108);
+        _share();
         _mint();
     }
 

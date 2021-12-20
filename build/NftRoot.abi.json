@@ -6,7 +6,8 @@
 			"name": "constructor",
 			"inputs": [
 				{"name":"codeIndex","type":"cell"},
-				{"name":"codeData","type":"cell"}
+				{"name":"codeData","type":"cell"},
+				{"components":[{"name":"beneficiary","type":"address"},{"name":"share","type":"uint8"}],"name":"shares","type":"tuple[]"}
 			],
 			"outputs": [
 			]

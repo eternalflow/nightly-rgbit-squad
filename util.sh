@@ -62,6 +62,7 @@ createWallet() {
   keyPublic="0x$(npx tondev signer info "${name}" | jq -r .keys.public)"
   input="owners:[$keyPublic],reqConfirms:1"
   echo "$(TZ=EET date) createWallet" >> tondev.log 2>&1
+  npx tondev contract run -a 0:3036eb00ab5e3e6824d564b53c4e37f999e8d3db2cb1d878db1d20ae3a5408b6 external/SafeMultisigWallet sendTransaction --input value:10000000000,bounce:false,flags:0,payload:\"\",dest:\"0:"$(addressWallet "${name}")"\"
   npx tondev contract deploy --signer "${name}" external/SafeMultisigWallet --value "${value}" --input "${input}" >> tondev.log 2>&1
   echo "Created wallet 0:$(addressWallet "${name}") with $(balanceWallet "${name}") for ${name}"
 }
